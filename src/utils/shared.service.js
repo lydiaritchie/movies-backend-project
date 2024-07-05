@@ -24,7 +24,6 @@ function listCritics(){
 }
 
 
-
 module.exports = {
     listMovies, 
     listTheaters,
