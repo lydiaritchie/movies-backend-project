@@ -8,7 +8,7 @@ function list(){
     return knex(tableName).select();
 }
 
-function listMovieTheaters(){
+function listMoviesWithTheaters(){
     return knex("movies_theaters").select();
 }
 
@@ -16,8 +16,13 @@ function read(movieId){
     return knex("movies").select("*").where({movie_id: movieId}).first();
 }
 
+function listTheaters(){
+    return knex("theaters").select("*");
+}
+
 module.exports = {
     list,
-    listMovieTheaters,
+    listMoviesWithTheaters,
     read,
+    listTheaters,
 };

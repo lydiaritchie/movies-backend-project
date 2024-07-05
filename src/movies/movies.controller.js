@@ -4,9 +4,24 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 //Create, Read, Update, Delete
 
 async function getMoviesTheaters(req, res, next){
-    const moviesTheaters = await service.listMovieTheaters();
+    const moviesTheaters = await service.listMoviesWithTheaters();
     res.locals.moviesTheaters = moviesTheaters;
     next();
+}
+
+function movieExists(req, res, next){
+    service
+        .read(req.params.movieId)
+        .then((movie) => {
+            if(movie) {
+                res.locals.movie = movie;
+                return next();
+            }
+            next(({ status: 404, message: `Movie cannot be found.`}));
+        })
+        .catch((error) => {
+            next(error);
+        })
 }
 
 async function list(req, res){
@@ -32,30 +47,34 @@ async function list(req, res){
     res.json({ data: allMovies });
 }
 
-function movieExists(req, res, next){
-    service
-        .read(req.params.movieId)
-        .then((movie) => {
-            if(movie) {
-                res.locals.movie = movie;
-                return next();
-            }
-            next(({ status: 404, message: `Movie cannot be found.`}));
-        })
-        .catch((error) => {
-            next(error);
-        })
-}
 
 function read(req, res, next){
     res.json({data: res.locals.movie});
 }
 
 async function getTheatersByMovie(req, res, next){
+    //Collect theater ids for the movieId
+    const movieId = res.locals.movie.movie_id;
+    const theaterIds = [];
+    res.locals.moviesTheaters.forEach((showingObj) => {
+        if(showingObj.is_showing && movieId === showingObj.movie_id && !theaterIds.includes(showingObj.movie_id)){
+            theaterIds.push(showingObj.theater_id);
+        }
+    })
 
+    //Get a list of all theaters
+    const theaters = await service.listTheaters();
+
+    //Go through all theaters and filter them if their id is in theaterIds
+    const filteredTheaters = theaters.filter((theater) => {
+        return theaterIds.includes(theater.theater_id);
+    })
+
+    res.json({data: filteredTheaters});
 }
 
 module.exports = {
     list: [asyncErrorBoundary(getMoviesTheaters), asyncErrorBoundary(list)],
     read: [movieExists, read],
+    listMovieTheaters: [movieExists, asyncErrorBoundary(getMoviesTheaters), asyncErrorBoundary(getTheatersByMovie)],
 };
