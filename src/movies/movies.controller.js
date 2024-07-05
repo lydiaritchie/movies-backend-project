@@ -1,5 +1,7 @@
 const service = require("./movies.service");
+const sharedService = require("../utils/shared.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+
 
 //Create, Read, Update, Delete
 
@@ -26,7 +28,7 @@ function movieExists(req, res, next){
 
 async function list(req, res){
     const { is_showing } = req.query;
-    const allMovies = await service.list();
+    const allMovies = await sharedService.listMovies();
     const moviesTheaters = res.locals.moviesTheaters;
 
     if(is_showing){
@@ -63,7 +65,7 @@ async function getTheatersByMovie(req, res, next){
     })
 
     //Get a list of all theaters
-    const theaters = await service.listTheaters();
+    const theaters = await sharedService.listTheaters();
 
     //Go through all theaters and filter them if their id is in theaterIds
     const filteredTheaters = theaters.filter((theater) => {
@@ -73,8 +75,20 @@ async function getTheatersByMovie(req, res, next){
     res.json({data: filteredTheaters});
 }
 
+//Get all reviews, then filter them for the current movie
+//For each review add the critic details
+//   - Get the critics data
+//   - Add the data with a critics key
+async function getReviewsByMovie(req, res, next){
+    const movieId = res.locals.movie.movie_id;
+    const reviews = await sharedService.listReviews;
+    
+    res.json({data: "reviews!"});
+}
+
 module.exports = {
     list: [asyncErrorBoundary(getMoviesTheaters), asyncErrorBoundary(list)],
     read: [movieExists, read],
     listMovieTheaters: [movieExists, asyncErrorBoundary(getMoviesTheaters), asyncErrorBoundary(getTheatersByMovie)],
+    listMovieReviews: [movieExists, asyncErrorBoundary(getReviewsByMovie)],
 };
