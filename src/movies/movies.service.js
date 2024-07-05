@@ -8,6 +8,11 @@ function list(){
     return knex(tableName).select();
 }
 
+function listMovieTheaters(){
+    return knex("movies_theaters").select();
+}
+
 module.exports = {
     list,
+    listMovieTheaters,
 };
