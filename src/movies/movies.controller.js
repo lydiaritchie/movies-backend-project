@@ -81,9 +81,20 @@ async function getTheatersByMovie(req, res, next){
 //   - Add the data with a critics key
 async function getReviewsByMovie(req, res, next){
     const movieId = res.locals.movie.movie_id;
-    const reviews = await sharedService.listReviews;
+    const reviews = await sharedService.listReviews();
+    const critics = await sharedService.listCritics();
     
-    res.json({data: "reviews!"});
+    const filteredReviews = reviews.filter((review) => {
+        return review.movie_id === movieId;
+    })
+
+    //for each review, find the critic by id and insert them
+    filteredReviews.forEach((review) => {
+        const criticObj = critics.find(critic => critic.critic_id === review.critic_id);
+        review.critic = criticObj;
+    });
+
+    res.json({data: filteredReviews});
 }
 
 module.exports = {

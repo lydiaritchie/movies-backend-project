@@ -19,9 +19,15 @@ function listReviews(){
     return knex("reviews").select("*");
 }
 
+function listCritics(){
+    return knex("critics").select("*");
+}
+
+
 
 module.exports = {
     listMovies, 
     listTheaters,
     listReviews,
+    listCritics,
 }
