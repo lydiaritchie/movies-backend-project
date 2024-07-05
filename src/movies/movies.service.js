@@ -12,7 +12,12 @@ function listMovieTheaters(){
     return knex("movies_theaters").select();
 }
 
+function read(movieId){
+    return knex("movies").select("*").where({movie_id: movieId}).first();
+}
+
 module.exports = {
     list,
     listMovieTheaters,
+    read,
 };
