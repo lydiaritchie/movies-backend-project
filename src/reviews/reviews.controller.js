@@ -29,6 +29,8 @@ async function update(req, res, next) {
     (critic) => critic.critic_id === currentReview.critic_id
   );
 
+  console.log(criticObj);
+
   let updatedReview = {
     ...res.locals.review,
     ...req.body.data,
@@ -39,7 +41,7 @@ async function update(req, res, next) {
 
   resObj.critic = criticObj;
 
-res.json({data: resObj});
+  res.json({"data": resObj});
 
 }
 

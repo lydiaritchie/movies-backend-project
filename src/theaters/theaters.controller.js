@@ -51,20 +51,32 @@ const fetchData = async () => {
 
 async function list(req, res, next) {
   //need all theaters, all movies and theaters and movies objs
-  const moviesTheatersObjs = await sharedService.listMoviesWithTheaters();
  
   const data = await fetchData();
 
   const reduceTheaterAndMovies = reduceProperties("theater_id", {
-    theater_id: ["theater", "theater_id"],
-    name: ["theater", "name"],
+    theater_id: ["theater_id"],
+    name: ["name"],
+    address_line_1: ["address_line_1"],
+    city: ["city"],
+    state: ["state"],
+    zip: ["zip"],
+    created_at: ["created_at"],
+    updated_at: ["updated_at"],
     movie_id: ["movies", null, "movie_id"],
     title: ["movies", null, "title"],
+    runtime_in_minutes: ["movies", null, "runtime_in_minutes"],
     rating: ["movies", null, "rating"],
+    description: ["movies", null, "description"],
+    image_url: ["movies", null, "image_url"],
+    created_at: ["movies", null, "created_at"],
+    updated_at: ["movies", null, "updated_at"],
+    is_showing: ["movies", null, "is_showing"],
+    theater_id: ["movies", null, "theater_id"],
   });
 
   const result = reduceTheaterAndMovies(data);
-  res.json({ result });
+  res.json({ "data": result });
 }
 
 module.exports = {
