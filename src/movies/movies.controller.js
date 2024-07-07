@@ -6,7 +6,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 //Create, Read, Update, Delete
 
 async function getMoviesTheaters(req, res, next){
-    const moviesTheaters = await service.listMoviesWithTheaters();
+    const moviesTheaters = await sharedService.listMoviesWithTheaters();
     res.locals.moviesTheaters = moviesTheaters;
     next();
 }

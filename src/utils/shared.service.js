@@ -23,10 +23,18 @@ function listCritics(){
     return knex("critics").select("*");
 }
 
+function listTheatersMovies(){
+    return knex("")
+}
+
+function listMoviesWithTheaters(){
+    return knex("movies_theaters").select();
+}
 
 module.exports = {
     listMovies, 
     listTheaters,
     listReviews,
     listCritics,
+    listMoviesWithTheaters,
 }
