@@ -12,7 +12,8 @@ function update(updatedReview){
     return knex(tableName)
         .select("*")
         .where({review_id: updatedReview.review_id})
-        .update(updatedReview, "*");
+        .update(updatedReview, "*")
+        .returning("*");
 }
 
 function destroy(review_id){

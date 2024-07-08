@@ -1,6 +1,7 @@
 const service = require("./reviews.service");
 const sharedService = require("../utils/shared.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const theatersService = require("../theaters/theaters.service");
 
 //Create, Read, Update, Delete
 
@@ -29,17 +30,19 @@ async function update(req, res, next) {
     (critic) => critic.critic_id === currentReview.critic_id
   );
 
-  console.log(criticObj);
-
-  let updatedReview = {
+  const updatedReview = {
     ...res.locals.review,
     ...req.body.data,
     review_id: currentReview.review_id,
   };
-  let newReview = await service.update(updatedReview);
-  let resObj = newReview[0];
 
-  resObj.critic = criticObj;
+  await service.update(updatedReview);
+
+  const afterReview = await service.read(currentReview.review_id);
+  const resObj = {
+    ...afterReview,
+    critic: criticObj,
+  };
 
   res.json({"data": resObj});
 
